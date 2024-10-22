@@ -49,8 +49,9 @@ class UserController extends Controller
     public function edit(User $user, $id)
     {
         // Find the user by ID
-        $user = $user->findOrFail($id);
-        return view('users.edit', compact('user'));
+        // $user = $user->findOrFail($id);
+        // return view('users.edit', compact('user'));
+        return response()->json($user->findOrFail($id));
     }
 
     public function update(UpdateUserRequest $request, User $user, $id)
@@ -64,8 +65,6 @@ class UserController extends Controller
         if ($request->hasFile('image')) {
             $data['imageUrl'] = $this->user->uploadFile($request->file('image'));
         }
-        // dd([$request->file('image'), $data['image']]);
-
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
@@ -73,6 +72,7 @@ class UserController extends Controller
             unset($data['password']);
         }
 
+        // dd($data);
         $user->where('id', $id)->update(array_filter($data));
 
         return redirect()->route('user.index')->with('success', 'User updated successfully.');
@@ -81,7 +81,7 @@ class UserController extends Controller
     public function destroy(User $user, $id)
     {
         $user->where('id', $id)->delete();
-        return redirect(route('user.index'))->with('success', 'user deleted succesffully');
+        return redirect(route('user.index'))->with('success', 'user deleted successfully');
     }
 
     // public function store(Request $request){
