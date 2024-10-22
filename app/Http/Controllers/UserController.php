@@ -34,6 +34,7 @@ class UserController extends Controller
         $data = [
             'name' => $request->name,
             'email' => $request->email,
+            'age' => $request->age,
             'password' => $request->password
         ];
 
@@ -59,6 +60,7 @@ class UserController extends Controller
 
         $data = [
             'name' => $request->name,
+            'age' => $request->age,
             'password' => $request->password
         ];
 

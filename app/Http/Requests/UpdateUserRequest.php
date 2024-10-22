@@ -26,6 +26,7 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => 'nullable',
             'email' => 'nullable|email|unique:users,email',
+            'age' => 'nullable|integer|min:0',
             'password' => 'nullable|min:6'
         ];
     }

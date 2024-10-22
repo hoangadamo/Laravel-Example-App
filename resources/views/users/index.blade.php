@@ -24,13 +24,14 @@
                 Create a New User
             </button>
         </div>
-        {{-- id="usersTable" --}}
-        <table class="table table-bordered">
+        {{-- id="user-table" --}}
+        <table class="table table-bordered" id="user-table">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Age</th>
                     <th>Image</th>
                     <th>Update</th>
                     <th>Delete</th>
@@ -42,10 +43,11 @@
                     <td>{{ $user->id }}</td>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
+                    <td>{{ $user->age }}</td>
                     <td><img src="{{ $user->imageUrl }}" style="width: 200px; height: auto;" /></td>
                     <td>
                         <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                            data-id="{{ $user->id }}" id="edit-btn">
+                            data-bs-target="#updateUserModal" data-id="{{ $user->id }}" id="edit-btn">
                             Edit
                         </button>
                     </td>
@@ -74,12 +76,14 @@
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
+                    console.log(data);
                     $('#name').val(data.name);
                     $('#email').val(data.email);
+                    $('#age').val(data.age);
                     const imageUrl = data.imageUrl;
                     $('#image').attr('src', imageUrl ? imageUrl : 'path/to/default/image.png');
                     $('#updateUserForm').attr('action', `/user/${data.id}/update`);
-                    var updateUserModal = new bootstrap.Modal(document.getElementById(
+                    var updateUserModal = bootstrap.Modal.getOrCreateInstance(document.getElementById(
                         'updateUserModal'));
                     updateUserModal.show();
                 },
@@ -90,7 +94,7 @@
         });
 
         $(document).ready(function() {
-            $('#usersTable').DataTable({
+            $('#user-table').DataTable({
                 "paging": true,
                 "lengthMenu": [3, 9, 12],
                 "pageLength": 3,
