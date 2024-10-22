@@ -20,6 +20,10 @@
                             disabled />
                     </div>
                     <div class="mb-3">
+                        <label for="age" class="form-label">Age</label>
+                        <input type="text" name="age" class="form-control" placeholder="Age" id="age" />
+                    </div>
+                    <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" name="password" class="form-control" placeholder="Password"
                             id="password" />
