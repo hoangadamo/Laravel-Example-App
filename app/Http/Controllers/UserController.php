@@ -1,0 +1,105 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\UpdateUserRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use Illuminate\Support\Facades\File;
+
+class UserController extends Controller
+{
+    protected $user;
+
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+
+    public function index()
+    {
+        $users = $this->user->getAllUser();
+        return view('users.index', compact('users'));
+    }
+
+    public function create()
+    {
+        return view('users.create');
+    }
+
+    public function store(CreateUserRequest $request)
+    {
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password
+        ];
+
+        if ($request->hasFile('image')) {
+            $data['imageUrl'] = $this->user->uploadFile($request->file('image'));
+        }
+        $data['password'] = Hash::make($data['password']);
+        // dd($data);
+        User::create($data);
+        return redirect(route('user.index'));
+    }
+
+    public function edit(User $user, $id)
+    {
+        // Find the user by ID
+        $user = $user->findOrFail($id);
+        return view('users.edit', compact('user'));
+    }
+
+    public function update(UpdateUserRequest $request, User $user, $id)
+    {
+
+        $data = [
+            'name' => $request->name,
+            'password' => $request->password
+        ];
+
+        if ($request->hasFile('image')) {
+            $data['imageUrl'] = $this->user->uploadFile($request->file('image'));
+        }
+        // dd([$request->file('image'), $data['image']]);
+
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        } else {
+            unset($data['password']);
+        }
+
+        $user->where('id', $id)->update(array_filter($data));
+
+        return redirect()->route('user.index')->with('success', 'User updated successfully.');
+    }
+
+    public function destroy(User $user, $id)
+    {
+        $user->where('id', $id)->delete();
+        return redirect(route('user.index'))->with('success', 'user deleted succesffully');
+    }
+
+    // public function store(Request $request){
+    //     $data = $request->validate([
+    //         'name' => 'required',
+    //         'email' => 'required|email|unique:users,email',
+    //         'password' => 'required|min:6'
+    //     ]);
+
+    //     $data['password'] = Hash::make($data['password']);
+
+    //     $user = User::updateOrCreate(
+    //         ['email' => $data['email']], // Check if email exists
+    //         $data
+    //     );
+
+    //     return redirect(route('user.index'))->with('success', 'User saved successfully.');
+    // } 
+
+
+}
