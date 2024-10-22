@@ -81,7 +81,7 @@
                     $('#email').val(data.email);
                     $('#age').val(data.age);
                     const imageUrl = data.imageUrl;
-                    $('#image').attr('src', imageUrl ? imageUrl : 'path/to/default/image.png');
+                    $('#updateImage').attr('src', imageUrl ? imageUrl : 'path/to/default/image.png');
                     $('#updateUserForm').attr('action', `/user/${data.id}/update`);
                     var updateUserModal = bootstrap.Modal.getOrCreateInstance(document.getElementById(
                         'updateUserModal'));
@@ -105,9 +105,9 @@
             });
         })
 
-        function previewImage() {
-            const input = document.getElementById('image');
-            const preview = document.getElementById('imagePreview');
+        function previewImage(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
 
             const file = input.files[0];
             const reader = new FileReader();

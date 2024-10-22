@@ -29,11 +29,11 @@
                             id="password" />
                     </div>
                     <div class="mb-3">
-                        <label for="image" class="form-label">Profile Image</label>
-                        <img id="imagePreview" src="#" alt="Image Preview"
+                        <label for="updateImage" class="form-label">Profile Image</label>
+                        <img id="updateImagePreview" src="#" alt="Image Preview"
                             style="display: none; max-width: 200px; margin-top: 10px;" />
-                        <input type="file" name="image" class="img-thumbnail" id="image"
-                            onchange="previewImage()" />
+                        <input type="file" name="image" class="img-thumbnail" id="updateImage"
+                            onchange="previewImage('updateImage', 'updateImagePreview')" />
                     </div>
                     <div>
                         <button type="submit" class="btn btn-primary">Update</button>
