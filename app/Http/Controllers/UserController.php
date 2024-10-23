@@ -20,22 +20,22 @@ class UserController extends Controller
         $this->user = $user;
     }
 
-    // public function index()
+    public function index()
+    {
+        $users = $this->user->getAllUser();
+        return view('users.index', compact('users'));
+    }
+
+    // public function index(): View
     // {
-    //     $users = $this->user->getAllUser();
-    //     return view('users.index', compact('users'));
+    //     $users = DB::select('select * from users');
+    //     return view('users.index', ['users' => $users]);
     // }
 
-    public function index(): View
-    {
-        $users = DB::select('select * from users');
-        return view('users.index', ['users' => $users]);
-    }
-
-    public function create()
-    {
-        return view('users.create');
-    }
+    // public function create()
+    // {
+    //     return view('users.create');
+    // }
 
     public function store(CreateUserRequest $request)
     {

@@ -29,4 +29,5 @@ Route::get('/categories', [CategoryController::class, 'list']);
 // Route::get('/categories/{category}', [CategoryController::class, 'details']);
 Route::get('/categories/{id}', [CategoryController::class, 'details']);
 Route::post('/categories', [CategoryController::class, 'create']);
+Route::put('/categories/{id}', [CategoryController::class, 'updateApi']);
 Route::delete('/categories/{id}', [CategoryController::class, 'delete']);

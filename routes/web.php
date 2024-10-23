@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
@@ -24,3 +25,10 @@ Route::post('/user', [UserController::class, 'store'])->name('user.store');
 Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
 Route::put('/user/{id}/update', [UserController::class, 'update'])->name('user.update');
 Route::delete('/user/{id}/destroy', [UserController::class, 'destroy'])->name('user.destroy');
+
+// Category
+Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
+Route::post('/category', [CategoryController::class, 'store'])->name('category.store');
+Route::get('/category/{id}/edit', [CategoryController::class, 'edit'])->name('category.edit');
+Route::put('/category/{id}/update', [CategoryController::class, 'update'])->name('category.update');
+Route::delete('/category/{id}/destroy', [CategoryController::class, 'destroy'])->name('category.destroy');
