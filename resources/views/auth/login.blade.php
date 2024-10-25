@@ -30,6 +30,13 @@
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
             <div class="mt-3">
+                <a href="{{ url('auth/google') }}"
+                    style="margin-top: 0px !important;background: green;color: #ffffff;padding: 8px;border-radius:7px;" 
+                    class="ml-2">
+                    <strong>Google Login</strong>
+                </a>
+            </div>
+            <div class="mt-3">
                 <p>Don't have an account? <a href="{{ route('register') }}">Register here</a></p>
                 <p><a href="{{ route('enterEmail') }}">Forgot your password?</a></p>
             </div>

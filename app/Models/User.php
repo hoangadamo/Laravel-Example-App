@@ -24,7 +24,10 @@ class User extends Authenticatable
         'email',
         'password',
         'imageUrl',
-        'age'
+        'age',
+        'social_id',
+        'social_type',
+        'email_verified_at'
     ];
 
     public function books(): HasMany
@@ -40,6 +43,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
     ];
 
     /**

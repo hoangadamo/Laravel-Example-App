@@ -1,11 +1,9 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\GoogleSocialiteController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
@@ -66,3 +64,6 @@ Route::get('/enter-email', [AuthController::class, 'enterEmail'])->name('enterEm
 Route::post('/send-reset', [AuthController::class, 'sendResetLink'])->name('sendResetLink');
 Route::get('/password/reset/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
 Route::post('/password/reset', [AuthController::class, 'reset'])->name('password.update');
+
+Route::get('auth/google', [GoogleSocialiteController::class, 'redirectToGoogle']);
+Route::get('callback/google', [GoogleSocialiteController::class, 'handleCallback']);
