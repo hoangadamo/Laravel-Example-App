@@ -20,7 +20,7 @@ class AuthController extends Controller
     public function __construct(User $user)
     {
         $this->user = $user;
-        $this->middleware('web');
+        // $this->middleware('web');
     }
 
     public function register()
