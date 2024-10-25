@@ -68,14 +68,14 @@
         $(document).on('click', '#edit-btn', function() {
             var id = $(this).data('id');
             $.ajax({
-                url: `/category/${id}/edit`,
+                url: `/admin/category/${id}/edit`,
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
                     console.log(data);
                     $('#name').val(data.name);
                     $('#description').val(data.description);
-                    $('#updateCategoryForm').attr('action', `/category/${data.id}/update`);
+                    $('#updateCategoryForm').attr('action', `/admin/category/${data.id}/update`);
                     var updateCategoryModal = bootstrap.Modal.getOrCreateInstance(document
                         .getElementById(
                             'updateCategoryModal'));
@@ -90,8 +90,8 @@
         $(document).ready(function() {
             $('#category-table').DataTable({
                 "paging": true,
-                "lengthMenu": [5, 10, 15],
-                "pageLength": 5,
+                "lengthMenu": [10, 20, 50],
+                "pageLength": 10,
                 "searching": true,
                 "ordering": true,
                 "info": true,

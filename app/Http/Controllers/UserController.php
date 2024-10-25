@@ -57,9 +57,6 @@ class UserController extends Controller
 
     public function edit(User $user, $id)
     {
-        // Find the user by ID
-        // $user = $user->findOrFail($id);
-        // return view('users.edit', compact('user'));
         return response()->json($user->findOrFail($id));
     }
 

@@ -72,7 +72,7 @@
         $(document).on('click', '#edit-btn', function() {
             var id = $(this).data('id');
             $.ajax({
-                url: `/user/${id}/edit`,
+                url: `/admin/user/${id}/edit`,
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -82,7 +82,7 @@
                     $('#age').val(data.age);
                     const imageUrl = data.imageUrl;
                     $('#updateImage').attr('src', imageUrl ? imageUrl : 'path/to/default/image.png');
-                    $('#updateUserForm').attr('action', `/user/${data.id}/update`);
+                    $('#updateUserForm').attr('action', `/admin/user/${data.id}/update`);
                     var updateUserModal = bootstrap.Modal.getOrCreateInstance(document.getElementById(
                         'updateUserModal'));
                     updateUserModal.show();
@@ -96,8 +96,8 @@
         $(document).ready(function() {
             $('#user-table').DataTable({
                 "paging": true,
-                "lengthMenu": [3, 9, 12],
-                "pageLength": 3,
+                "lengthMenu": [10, 20, 50],
+                "pageLength": 10,
                 "searching": true,
                 "ordering": true,
                 "info": true,

@@ -9,11 +9,10 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-
     // api
     public function list(Request $request)
     {
-        $categories =  Category::all();
+        $categories =  Category::paginate(10);
         return response()->json($categories);
     }
 
@@ -106,6 +105,6 @@ class CategoryController extends Controller
     public function destroy(Category $category, $id)
     {
         $category->where('id', $id)->delete();
-        return redirect(route('category.index'))->with('success', 'category deleted successfully');
+        return redirect()->route('category.index')->with('success', 'category deleted successfullys.');
     }
 }
