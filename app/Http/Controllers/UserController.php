@@ -7,7 +7,9 @@ use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
@@ -24,10 +26,16 @@ class UserController extends Controller
         return view('users.index', compact('users'));
     }
 
-    public function create()
-    {
-        return view('users.create');
-    }
+    // public function index(): View
+    // {
+    //     $users = DB::select('select * from users');
+    //     return view('users.index', ['users' => $users]);
+    // }
+
+    // public function create()
+    // {
+    //     return view('users.create');
+    // }
 
     public function store(CreateUserRequest $request)
     {
@@ -49,10 +57,13 @@ class UserController extends Controller
 
     public function edit(User $user, $id)
     {
-        // Find the user by ID
-        // $user = $user->findOrFail($id);
-        // return view('users.edit', compact('user'));
         return response()->json($user->findOrFail($id));
+    }
+
+    public function getUserList()
+    {
+        $users = User::all();
+        return response()->json($users);
     }
 
     public function update(UpdateUserRequest $request, User $user, $id)

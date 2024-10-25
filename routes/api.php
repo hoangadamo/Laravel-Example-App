@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +20,18 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Route::get('/users/{id}/edit', [UserController::class, 'edit']);
+
+// Route::get('/users', [UserController::class, 'getUserList']);
+
+
+// Route::get('/categories', [CategoryController::class, 'list']);
+// // Route::get('/categories/{category}', [CategoryController::class, 'details']);
+// Route::get('/categories/{id}', [CategoryController::class, 'details']);
+// Route::post('/categories', [CategoryController::class, 'create']);
+// Route::put('/categories/{id}', [CategoryController::class, 'updateApi']);
+// Route::delete('/categories/{id}', [CategoryController::class, 'delete']);
+
+// Route::post('/send-otp', [AuthController::class, 'sendOTP'])->name('sendOTP');
+// Route::post('/verify', [AuthController::class, 'verifyOTP'])->name('verifyOTP');
