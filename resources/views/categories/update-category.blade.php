@@ -13,11 +13,12 @@
                     @method('put')
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
-                        <input type="text" name="name" class="form-control" placeholder="Name" />
+                        <input type="text" name="name" class="form-control" placeholder="Name" id="name" />
                     </div>
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
-                        <input type="text" name="description" class="form-control" placeholder="Description" />
+                        <input type="text" name="description" class="form-control" placeholder="Description"
+                            id="description" />
                     </div>
                     <div>
                         <button type="submit" class="btn btn-primary">Update</button>
