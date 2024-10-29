@@ -33,6 +33,7 @@
                     <th>Email</th>
                     <th>Age</th>
                     <th>Image</th>
+                    <th>Status</th>
                     <th>Update</th>
                     <th>Delete</th>
                 </tr>
@@ -45,6 +46,15 @@
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->age }}</td>
                     <td><img src="{{ $user->imageUrl }}" style="width: 200px; height: auto;" /></td>
+                    <td>
+                        <form method="post" action="{{ route('user.toggleStatus', ['id' => $user->id]) }}">
+                            @csrf
+                            <button type="submit" class="btn btn-sm"
+                                style="background-color: {{ $user->isActive ? 'red' : 'green' }};">
+                                {{ $user->isActive ? 'Deactivate' : 'Activate' }}
+                            </button>
+                        </form>
+                    </td>
                     <td>
                         <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
                             data-bs-target="#updateUserModal" data-id="{{ $user->id }}" id="edit-btn">
