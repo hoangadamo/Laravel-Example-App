@@ -93,9 +93,17 @@ class AuthController extends Controller
             }
             /** @var \App\Models\User $user **/
             $user = Auth::user();
-            $token = $user->createToken('Personal Access Token')->accessToken;
 
-            return response()->json(['token' => $token, 'user' => new UserResource($user)], 200);
+            $tokenResult = $user->createToken('Personal Access Token');
+            $token = $tokenResult->token;
+            $token->expires_at = now()->addDays(10); // 10 days
+            $token->save();
+
+            return response()->json([
+                'token' => $tokenResult->accessToken, 
+                'expires_at' => $token->expires_at, 
+                'user' => new UserResource($user)
+            ], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Login failed', 'message' => $e->getMessage()], 500);
         }

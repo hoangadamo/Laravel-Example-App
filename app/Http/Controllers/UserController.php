@@ -26,17 +26,6 @@ class UserController extends Controller
         return view('users.index', compact('users'));
     }
 
-    // public function index(): View
-    // {
-    //     $users = DB::select('select * from users');
-    //     return view('users.index', ['users' => $users]);
-    // }
-
-    // public function create()
-    // {
-    //     return view('users.create');
-    // }
-
     public function store(CreateUserRequest $request)
     {
         $data = [
@@ -97,22 +86,14 @@ class UserController extends Controller
         return redirect(route('user.index'))->with('success', 'user deleted successfully');
     }
 
-    // public function store(Request $request){
-    //     $data = $request->validate([
-    //         'name' => 'required',
-    //         'email' => 'required|email|unique:users,email',
-    //         'password' => 'required|min:6'
-    //     ]);
-
-    //     $data['password'] = Hash::make($data['password']);
-
-    //     $user = User::updateOrCreate(
-    //         ['email' => $data['email']], // Check if email exists
-    //         $data
-    //     );
-
-    //     return redirect(route('user.index'))->with('success', 'User saved successfully.');
-    // } 
-
-
+    public function toggleStatus($id)
+    {
+        try {
+            $user = $this->user->getUserById($id);
+            $user->where('id', $id)->update(['isActive' => !$user->isActive]);
+            return redirect()->back()->with('success', 'User status updated successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
 }

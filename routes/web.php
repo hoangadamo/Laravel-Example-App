@@ -38,6 +38,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/user/{id}/update', [UserController::class, 'update'])->name('user.update');
     Route::delete('/user/{id}/destroy', [UserController::class, 'destroy'])->name('user.destroy');
+    Route::post('/user/toggle-status/{id}', [UserController::class, 'toggleStatus'])->name('user.toggleStatus');
+
 
     // Category
     Route::get('/category', [CategoryController::class, 'index'])->name('category.index');

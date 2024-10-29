@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateBookRequest;
 use App\Http\Resources\BookCollection;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
+use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
@@ -28,16 +29,28 @@ class BookController extends Controller
         }
     }
 
-    public function getListOfBooks()
+    public function getListOfBooks(Request $request)
     {
         try {
-            $books = $this->bookModel->getBooks();
+            $limit = $request->query('limit', 10);
+            $books = $this->bookModel->paginate($limit);
             $bookCollection = new BookCollection($books);
             return response()->json($bookCollection, 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Get list of books failed', 'message' => $e->getMessage()], 500);
         }
     }
+
+    // public function getListOfBooks()
+    // {
+    //     try {
+    //         $books = $this->bookModel->getBooks();
+    //         $bookCollection = new BookCollection($books);
+    //         return response()->json($bookCollection, 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => 'Get list of books failed', 'message' => $e->getMessage()], 500);
+    //     }
+    // }
 
     public function getBookDetails($id)
     {
