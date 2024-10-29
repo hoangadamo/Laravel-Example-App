@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -45,11 +46,14 @@ class CategoryController extends Controller
 
     public function createCategory(CreateCategoryRequest $request)
     {
+        DB::beginTransaction();
         try {
             $category = $this->categoryModel->createCategory($request);
             $categoryResource = new CategoryResource($category);
+            DB::commit();
             return response()->json($categoryResource, 201);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['error' => 'Create category failed', 'message' => $e->getMessage()], 500);
         }
     }
