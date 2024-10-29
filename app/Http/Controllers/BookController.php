@@ -34,7 +34,7 @@ class BookController extends Controller
         ];
 
         $book = Book::create($data);
-        $book->bookCategories()->attach($request->categoryIds);
+        $book->categories()->attach($request->categoryIds);
 
         return redirect(route('book.index'))->with('success', 'Book created successfully.');
     }
@@ -56,7 +56,7 @@ class BookController extends Controller
         $book->update(array_filter($data));
 
         if ($request->has('categoryIds')) {
-            $book->bookCategories()->sync($request->input('categoryIds'));
+            $book->categories()->sync($request->input('categoryIds'));
         }
 
         return redirect()->route('book.index')->with('success', 'Book updated successfully.');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Resources\UserResource;
 use App\Models\OTP;
 use App\Models\User;
 use Carbon\Carbon;
@@ -26,17 +27,7 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         try {
-            $data = [
-                'name' => $request->name,
-                'email' => $request->email,
-                'age' => $request->age,
-                'password' => $request->password
-            ];
-            $data['password'] = Hash::make($data['password']);
-            if ($request->hasFile('image')) {
-                $data['imageUrl'] = $this->userModel->uploadFile($request->file('image'));
-            }
-            $user = $this->userModel->create($data);
+            $user = $this->userModel->storeUser($request);
             return response()->json(['message' => 'User registered successfully', 'user' => $user], 201);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Registration failed', 'message' => $e->getMessage()], 500);
@@ -104,7 +95,7 @@ class AuthController extends Controller
             $user = Auth::user();
             $token = $user->createToken('Personal Access Token')->accessToken;
 
-            return response()->json(['token' => $token], 200);
+            return response()->json(['token' => $token, 'user' => new UserResource($user)], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Login failed', 'message' => $e->getMessage()], 500);
         }

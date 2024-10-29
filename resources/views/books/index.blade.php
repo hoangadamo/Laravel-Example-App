@@ -44,7 +44,7 @@
                     <td>{{ $book->title }}</td>
                     <td>{{ $book->publishedDate->format('Y-m-d') }}</td>
                     <td>
-                        @foreach ($book->bookCategories as $category)
+                        @foreach ($book->categories as $category)
                             {{ $category->name }}@if (!$loop->last)
                                 ,
                             @endif

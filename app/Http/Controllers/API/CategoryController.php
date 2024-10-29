@@ -21,7 +21,7 @@ class CategoryController extends Controller
     public function getListOfCategories()
     {
         try {
-            $categories = $this->categoryModel->get();
+            $categories = $this->categoryModel->getCategories();
             $categoryCollection = new CategoryCollection($categories);
             return response()->json($categoryCollection, 200);
         } catch (\Exception $e) {
@@ -32,7 +32,7 @@ class CategoryController extends Controller
     public function getCategoryDetails($id)
     {
         try {
-            $category = $this->categoryModel->find($id);
+            $category = $this->categoryModel->getCategoryById($id);
             if (!$category) {
                 return response()->json(['message' => 'Category not found'], 404);
             }
@@ -45,29 +45,25 @@ class CategoryController extends Controller
 
     public function createCategory(CreateCategoryRequest $request)
     {
-        $data = [
-            'name' => $request->name,
-            'description' => $request->description,
-        ];
-
-        $category = $this->categoryModel->create($data);
-        $categoryResource = new CategoryResource($category);
-
-        return response()->json($categoryResource, 201);
+        try {
+            $category = $this->categoryModel->createCategory($request);
+            $categoryResource = new CategoryResource($category);
+            return response()->json($categoryResource, 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Create category failed', 'message' => $e->getMessage()], 500);
+        }
     }
 
     public function updateCategory(UpdateCategoryRequest $request, $id)
     {
         try {
-            $category = $this->categoryModel->find($id);
+            $category = $this->categoryModel->getCategoryById($id);
             if (!$category) {
                 return response()->json(['error' => 'Category not found'], 404);
             }
-
-            $data = $request->only('name', 'description');
-
-            $category->update(array_filter($data));
-            $categoryResource = new CategoryResource($category);
+            $category->updateCategory($request, $id);
+            $updatedCategory = $this->categoryModel->getCategoryById($id);
+            $categoryResource = new CategoryResource($updatedCategory);
             return response()->json($categoryResource, 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Update category failed', 'message' => $e->getMessage()], 500);
@@ -77,11 +73,13 @@ class CategoryController extends Controller
     public function deleteCategory($id)
     {
         try {
-            $category = $this->categoryModel->find($id);
+            $category = $this->categoryModel->getCategoryById($id);
             if (!$category) {
                 return response()->json(['error' => 'Category not found'], 404);
             }
-            $category->delete();
+            $this->categoryModel->deleteCategory($id);
+            // Detach all books_categories related to the category
+            $category->books()->detach();
             return response()->json(['message' => 'Category deleted successfully'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Delete category failed', 'message' => $e->getMessage()], 500);
@@ -91,7 +89,7 @@ class CategoryController extends Controller
     public function getAllCategoryBooks($id)
     {
         try {
-            $category = $this->categoryModel->find($id);
+            $category = $this->categoryModel->getCategoryById($id);
             if (!$category) {
                 return response()->json(['error' => 'Category not found'], 404);
             }
