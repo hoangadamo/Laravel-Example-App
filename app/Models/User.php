@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
@@ -32,7 +33,7 @@ class User extends Authenticatable
 
     public function books(): HasMany
     {
-        return $this->hasMany(Book::class);
+        return $this->hasMany(Book::class, 'userId');
     }
 
     /**
@@ -57,11 +58,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function getAllUser()
-    {
-        return $this->all();
-    }
-
     public function uploadFile($file)
     {
         $publicPath = 'uploads';
@@ -70,5 +66,72 @@ class User extends Authenticatable
         $file->move($absolutePath, $file->getClientOriginalName());
 
         return $publicPath . '/' . $file->getClientOriginalName();
+    }
+
+    public function getUsers()
+    {
+        return $this->get();
+    }
+
+    public function getUserById($id)
+    {
+        return $this->where('id', $id)->first();
+    }
+
+    public function storeUser($request)
+    {
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'age' => $request->age,
+            'password' => $request->password
+        ];
+        $data['password'] = Hash::make($data['password']);
+        if ($request->hasFile('image')) {
+            $data['imageUrl'] = $this->uploadFile($request->file('image'));
+        }
+        $user = $this->create($data);
+        return $user;
+    }
+
+    public function updateUser($request, $id)
+    {
+        $data = [
+            'name' => $request->name,
+            'age' => $request->age
+        ];
+        if ($request->hasFile('image')) {
+            $data['imageUrl'] = $this->uploadFile($request->file('image'));
+        }
+        $this->where('id', $id)->update(array_filter($data));
+    }
+
+    public function changePassword($request, $id)
+    {
+        $data = [
+            'oldPassword' => $request->oldPassword,
+            'newPassword' => $request->newPassword,
+            'confirmPassword' => $request->confirmPassword
+        ];
+
+        $user = $this->getUserById($id);
+
+        if (!Hash::check($data['oldPassword'], $user->password)) {
+            return response()->json(['error' => 'Old password is incorrect'], 400);
+        }
+        if ($data['newPassword'] !== $data['confirmPassword']) {
+            return response()->json(['error' => 'New password and confirm password do not match'], 400);
+        }
+        if ($data['newPassword'] === $data['oldPassword']) {
+            return response()->json(['error' => 'New password must be different from the current password'], 400);
+        }
+
+        $this->where('id', $id)->update(['password' => Hash::make($data['newPassword'])]);
+        return response()->json(['message' => 'Password changed successfully'], 200);
+    }
+
+    public function deleteUser($id)
+    {
+        $this->where('id', $id)->delete();
     }
 }

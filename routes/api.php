@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\BookController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\CategoryController;
 use Illuminate\Http\Request;
@@ -41,6 +42,7 @@ Route::prefix('user')->middleware('auth:api')->group(function () {
     Route::put('/{id}', [UserController::class, 'updateUser']);
     Route::put('/{id}/change-password', [UserController::class, 'changePassword']);
     Route::delete('/{id}', [UserController::class, 'deleteUser']);
+    Route::get('/{id}/books', [UserController::class, 'getAllUserBooks']);
 });
 
 // Category
@@ -51,4 +53,16 @@ Route::prefix('category')->group(function () {
     Route::put('/{id}', [CategoryController::class, 'updateCategory']);
     Route::delete('/{id}', [CategoryController::class, 'deleteCategory']);
     Route::get('/{id}/books', [CategoryController::class, 'getAllCategoryBooks']);
+});
+
+// Book
+Route::prefix('book')->group(function () {
+    Route::middleware('auth:api')->group(function () {
+        Route::post('/', [BookController::class, 'createBook']);
+    });
+    Route::get('/', [BookController::class, 'getListOfBooks']);
+    Route::get('/{id}', [BookController::class, 'getBookDetails']);
+    Route::put('/{id}', [BookController::class, 'updateBook']);
+    Route::delete('/{id}', [BookController::class, 'deleteBook']);
+
 });

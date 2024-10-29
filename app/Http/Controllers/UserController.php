@@ -22,7 +22,7 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = $this->user->getAllUser();
+        $users = $this->user->getUsers();
         return view('users.index', compact('users'));
     }
 
