@@ -14,11 +14,8 @@ class CategoryCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        return [
-            'data' => $this->collection,
-            'meta' => [
-                'total_categories' => $this->collection->count(),
-            ],
-        ];
+        $paging = $this->resource->toArray();
+        $paging['data'] = CategoryResource::collection($this->collection);
+        return $paging;
     }
 }

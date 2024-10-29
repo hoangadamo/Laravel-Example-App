@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
@@ -19,10 +20,11 @@ class CategoryController extends Controller
         $this->categoryModel = $category;
     }
 
-    public function getListOfCategories()
+    public function getListOfCategories(Request $request)
     {
         try {
-            $categories = $this->categoryModel->getCategories();
+            $limit = $request->query('limit', 10);
+            $categories = $this->categoryModel->paginate($limit);
             $categoryCollection = new CategoryCollection($categories);
             return response()->json($categoryCollection, 200);
         } catch (\Exception $e) {
