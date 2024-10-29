@@ -100,4 +100,14 @@ class CategoryController extends Controller
             return response()->json(['error' => 'Get all books of category failed', 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function getDeletedCategories()
+    {
+        try {
+            $deletedCategories = $this->categoryModel::onlyTrashed()->get();
+            return response()->json(['deleted_categories' => $deletedCategories], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Get deleted categories failed', 'message' => $e->getMessage()], 500);
+        }
+    }
 }

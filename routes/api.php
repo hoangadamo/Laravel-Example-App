@@ -47,6 +47,7 @@ Route::prefix('user')->middleware('auth:api')->group(function () {
 
 // Category
 Route::prefix('category')->group(function () {
+    // Route::get('/deleted', [CategoryController::class, 'getDeletedCategories']);
     Route::get('/', [CategoryController::class, 'getListOfCategories']);
     Route::get('/{id}', [CategoryController::class, 'getCategoryDetails']);
     Route::post('/', [CategoryController::class, 'createCategory']);
@@ -64,5 +65,4 @@ Route::prefix('book')->group(function () {
     Route::get('/{id}', [BookController::class, 'getBookDetails']);
     Route::put('/{id}', [BookController::class, 'updateBook']);
     Route::delete('/{id}', [BookController::class, 'deleteBook']);
-
 });
