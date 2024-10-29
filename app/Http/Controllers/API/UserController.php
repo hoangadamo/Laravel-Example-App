@@ -20,10 +20,11 @@ class UserController extends Controller
         $this->userModel = $user;
     }
 
-    public function getListOfUsers()
+    public function getListOfUsers(Request $request)
     {
         try {
-            $users = $this->userModel->getUsers();
+            $limit = $request->query('limit', 10);
+            $users = $this->userModel->paginate($limit);
             $userCollection = new UserCollection($users);
             return response()->json($userCollection, 200);
         } catch (\Exception $e) {

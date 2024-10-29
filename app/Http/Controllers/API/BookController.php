@@ -41,17 +41,6 @@ class BookController extends Controller
         }
     }
 
-    // public function getListOfBooks()
-    // {
-    //     try {
-    //         $books = $this->bookModel->getBooks();
-    //         $bookCollection = new BookCollection($books);
-    //         return response()->json($bookCollection, 200);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['error' => 'Get list of books failed', 'message' => $e->getMessage()], 500);
-    //     }
-    // }
-
     public function getBookDetails($id)
     {
         try {
