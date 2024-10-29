@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
+use App\Jobs\SendOtpEmail;
 use App\Models\OTP;
 use App\Models\User;
 use Carbon\Carbon;
@@ -40,10 +41,9 @@ class AuthController extends Controller
             $otp = rand(1000, 9999);
             $email = $request->input('email');
             $expirationTime = Carbon::now()->addMinutes(10)->toDateTimeString();
-            Mail::send('mail.template', ['otp' => $otp, 'expirationTime' => $expirationTime], function ($message) use ($email) {
-                $message->to($email)
-                    ->subject('Your OTP Code');
-            });
+
+            // Job
+            SendOtpEmail::dispatch($email, $otp, $expirationTime);
 
             $this->otpModel->create([
                 'otp' => $otp,
@@ -100,8 +100,8 @@ class AuthController extends Controller
             $token->save();
 
             return response()->json([
-                'token' => $tokenResult->accessToken, 
-                'expires_at' => $token->expires_at, 
+                'token' => $tokenResult->accessToken,
+                'expires_at' => $token->expires_at,
                 'user' => new UserResource($user)
             ], 200);
         } catch (\Exception $e) {
