@@ -4,6 +4,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BookController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\OrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -64,5 +65,14 @@ Route::prefix('book')->group(function () {
     Route::get('/{id}', [BookController::class, 'getBookDetails']);
     Route::put('/{id}', [BookController::class, 'updateBook']);
     Route::delete('/{id}', [BookController::class, 'deleteBook']);
+});
 
+// Order
+Route::prefix('order')->group(function () {
+    Route::middleware('auth:api')->group(function () {
+        Route::post('/', [OrderController::class, 'createOrder']);
+    });
+    Route::get('/filtered', [OrderController::class, 'getFilterOrders']);
+    Route::get('/', [OrderController::class, 'getListOfOrders']);
+    Route::get('/{id}', [OrderController::class, 'getOrderDetails']);
 });
