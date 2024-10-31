@@ -63,8 +63,7 @@ class OrderController extends Controller
         try {
             $filters = $request->all();
             $orders = $this->orderModel->filterOrders($filters);
-            $orderCollection = new OrderCollection($orders);
-            return response()->json([$orders], 200);
+            return response()->json($orders, 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Get filtered order failed', 'message' => $e->getMessage()], 500);
         }
