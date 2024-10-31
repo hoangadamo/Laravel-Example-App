@@ -76,3 +76,9 @@ Route::prefix('order')->group(function () {
     Route::get('/', [OrderController::class, 'getListOfOrders']);
     Route::get('/{id}', [OrderController::class, 'getOrderDetails']);
 });
+
+Route::prefix('cache')->group(function () {
+    Route::post('/', [OrderController::class, 'storeOrderInCache']);
+    Route::get('/{token}', [OrderController::class, 'getOrderFromCacheByToken']);
+    Route::delete('/{token}', [OrderController::class, 'deleteOrderFromCacheByToken']);
+});
