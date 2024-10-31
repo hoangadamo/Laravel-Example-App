@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\Auth;
 
 class Order extends Model
 {
@@ -87,11 +86,14 @@ class Order extends Model
                     $query->whereDate('publishedDate', $filters['publishedDate']);
                 });
             })
-        ->when(isset($filters['quantityMin']) && isset($filters['quantityMax']), function ($query) use ($filters) {
-            $query->whereHas('books', function ($query) use ($filters) {
-                $query->whereBetween('pivot.quantity', [$filters['quantityMin'], $filters['quantityMax']]);
+            ->when(isset($filters['quantityMin']) && isset($filters['quantityMax']), function ($query) use ($filters) {
+                $query->whereIn('orders.id', function ($subquery) use ($filters) {
+                    $subquery->select('books_orders.orderId')
+                        ->from('books_orders')
+                        ->groupBy('books_orders.orderId')
+                        ->havingRaw('SUM(books_orders.quantity) BETWEEN ? AND ?', [$filters['quantityMin'], $filters['quantityMax']]);
+                });
             });
-        });
         // dd($query->get());
         return $query->get();
     }
