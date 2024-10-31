@@ -11,6 +11,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -99,11 +100,13 @@ class AuthController extends Controller
             $token->expires_at = now()->addDays(10); // 10 days
             $token->save();
 
+            $cookie = Cookie::make('access_token', $tokenResult->accessToken, 14400);
+
             return response()->json([
                 'token' => $tokenResult->accessToken,
                 'expires_at' => $token->expires_at,
                 'user' => new UserResource($user)
-            ], 200);
+            ], 200)->cookie($cookie);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Login failed', 'message' => $e->getMessage()], 500);
         }
@@ -115,7 +118,9 @@ class AuthController extends Controller
             /** @var \App\Models\User $user **/
             $user = Auth::user();
             $user->token()->revoke();
-            return response()->json(['message' => 'Successfully logged out'], 200);
+            $cookie = Cookie::forget('access_token');
+
+            return response()->json(['message' => 'Successfully logged out'], 200)->cookie($cookie);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Logout failed', 'message' => $e->getMessage()], 500);
         }
