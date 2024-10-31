@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class Order extends Model
 {
@@ -51,6 +53,36 @@ class Order extends Model
             ]);
         }
         return $order;
+    }
+
+    public function storeOrderInCache($request)
+    {
+        $totalAmount = 0;
+        $books = [];
+
+        foreach ($request->books as $book) {
+            $currentBook = Book::find($book['bookId']);
+            $totalAmount += $book['quantity'] * $currentBook->price;
+            $books[] = [
+                'bookId' => $book['bookId'],
+                'quantity' => $book['quantity'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        $token = Str::uuid();
+        $orderData = [
+            'userId' => 7,
+            'orderDate' => now(),
+            'totalAmount' => $totalAmount,
+            'books' => $books,
+            'token' => $token,
+        ];
+
+        Cache::put('order_' . $token, json_encode($orderData), now()->addMinutes(10));
+
+        return $orderData;
     }
 
     public function getOrders()
