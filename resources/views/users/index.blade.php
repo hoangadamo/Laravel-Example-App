@@ -82,7 +82,7 @@
         $(document).on('click', '#edit-btn', function() {
             var id = $(this).data('id');
             $.ajax({
-                url: `/admin/user/${id}/edit`,
+                url: '{{ route('user.edit', ['id' => 'ID']) }}'.replace('ID', id),
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
