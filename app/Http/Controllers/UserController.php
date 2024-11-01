@@ -28,19 +28,7 @@ class UserController extends Controller
 
     public function store(CreateUserRequest $request)
     {
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'age' => $request->age,
-            'password' => $request->password
-        ];
-
-        if ($request->hasFile('image')) {
-            $data['imageUrl'] = $this->user->uploadFile($request->file('image'));
-        }
-        $data['password'] = Hash::make($data['password']);
-        // dd($data);
-        User::create($data);
+        $users = $this->user->storeUser($request);
         return redirect(route('user.index'));
     }
 
@@ -55,27 +43,10 @@ class UserController extends Controller
         return response()->json($users);
     }
 
-    public function update(UpdateUserRequest $request, User $user, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
 
-        $data = [
-            'name' => $request->name,
-            'age' => $request->age,
-            'password' => $request->password
-        ];
-
-        if ($request->hasFile('image')) {
-            $data['imageUrl'] = $this->user->uploadFile($request->file('image'));
-        }
-
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
-        } else {
-            unset($data['password']);
-        }
-
-        // dd($data);
-        $user->where('id', $id)->update(array_filter($data));
+        $this->user->updateUser($request, $id);
 
         return redirect()->route('user.index')->with('success', 'User updated successfully.');
     }
