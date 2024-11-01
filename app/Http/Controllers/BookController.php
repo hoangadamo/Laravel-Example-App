@@ -27,15 +27,7 @@ class BookController extends Controller
 
     public function store(CreateBookRequest $request)
     {
-        $data = [
-            'title' => $request->title,
-            'publishedDate' => $request->publishedDate,
-            'userId' => auth()->id(), // Get the authenticated user's ID
-        ];
-
-        $book = Book::create($data);
-        $book->categories()->attach($request->categoryIds);
-
+        $book = $this->book->createBook($request);
         return redirect(route('book.index'))->with('success', 'Book created successfully.');
     }
 
@@ -44,28 +36,21 @@ class BookController extends Controller
         return response()->json($book->findOrFail($id));
     }
 
-    public function update(UpdateBookRequest $request, Book $book, $id)
+    public function update(UpdateBookRequest $request, $id)
     {
-        $book = Book::findOrFail($id);
-
-        $data = [
-            'title' => $request->title,
-            'publishedDate' => $request->publishedDate,
-        ];
-
-        $book->update(array_filter($data));
-
-        if ($request->has('categoryIds')) {
-            $book->categories()->sync($request->input('categoryIds'));
+        $book = $this->book->getBookById($id);
+        if (!$book) {
+            return redirect()->back()->with('error', 'Book not found')->withInput();
         }
+        $book->updateBook($request, $id);
 
         return redirect()->route('book.index')->with('success', 'Book updated successfully.');
     }
 
 
-    public function destroy(Book $book, $id)
+    public function destroy($id)
     {
-        $book->deleteBook($id);
+        $this->book->deleteBook($id);
         return redirect(route('book.index'))->with('success', 'book deleted successfully');
     }
 }
