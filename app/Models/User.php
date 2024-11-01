@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\HasApiTokens;
 
+use function App\Helpers\uploadFile;
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -62,16 +64,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function uploadFile($file)
-    {
-        $publicPath = 'uploads';
-        $absolutePath = public_path($publicPath);
-        File::makeDirectory($absolutePath, 0755, true, true);
-        $file->move($absolutePath, $file->getClientOriginalName());
-
-        return $publicPath . '/' . $file->getClientOriginalName();
-    }
-
     public function getUsers()
     {
         return $this->get();
@@ -92,7 +84,8 @@ class User extends Authenticatable
         ];
         $data['password'] = Hash::make($data['password']);
         if ($request->hasFile('image')) {
-            $data['imageUrl'] = $this->uploadFile($request->file('image'));
+            $IMAGE_URL = uploadFile($request->file('image'));
+            $data['imageUrl'] = $IMAGE_URL;
         }
         $user = $this->create($data);
         return $user;
@@ -102,10 +95,19 @@ class User extends Authenticatable
     {
         $data = [
             'name' => $request->name,
-            'age' => $request->age
+            'age' => $request->age,
+            'password' => $request->password
         ];
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        } else {
+            unset($data['password']);
+        }
+
         if ($request->hasFile('image')) {
-            $data['imageUrl'] = $this->uploadFile($request->file('image'));
+            $IMAGE_URL = uploadFile($request->file('image'));
+            $data['imageUrl'] = $IMAGE_URL;
         }
         $this->where('id', $id)->update(array_filter($data));
     }
