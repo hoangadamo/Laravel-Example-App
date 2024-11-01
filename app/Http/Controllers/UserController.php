@@ -37,12 +37,6 @@ class UserController extends Controller
         return response()->json($user->findOrFail($id));
     }
 
-    public function getUserList()
-    {
-        $users = User::all();
-        return response()->json($users);
-    }
-
     public function update(UpdateUserRequest $request, $id)
     {
 
@@ -51,9 +45,9 @@ class UserController extends Controller
         return redirect()->route('user.index')->with('success', 'User updated successfully.');
     }
 
-    public function destroy(User $user, $id)
+    public function destroy($id)
     {
-        $user->where('id', $id)->delete();
+        $this->user->deleteUser($id);
         return redirect(route('user.index'))->with('success', 'user deleted successfully');
     }
 

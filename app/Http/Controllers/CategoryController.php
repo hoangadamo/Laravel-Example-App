@@ -9,20 +9,23 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+
+    protected $categoryModel;
+
+    public function __construct(Category $category)
+    {
+        $this->categoryModel = $category;
+    }
+
     public function index()
     {
-        $categories = Category::all();
+        $categories = $this->categoryModel->getCategories();
         return view('categories.index', compact('categories'));
     }
 
     public function store(CreateCategoryRequest $request)
     {
-        $data = [
-            'name' => $request->name,
-            'description' => $request->description,
-        ];
-
-        Category::create($data);
+        $categories = $this->categoryModel->createCategory($request);
         return redirect(route('category.index'));
     }
 
@@ -33,19 +36,13 @@ class CategoryController extends Controller
 
     public function update(UpdateCategoryRequest $request, Category $category, $id)
     {
-        $data = [
-            'name' => $request->name,
-            'description' => $request->description
-        ];
-
-        $category->where('id', $id)->update(array_filter($data));
-
+        $this->categoryModel->updateCategory($request, $id);
         return redirect()->route('category.index')->with('success', 'category updated successfully.');
     }
 
-    public function destroy(Category $category, $id)
+    public function destroy($id)
     {
-        $category->where('id', $id)->delete();
+        $this->categoryModel->deleteCategory($id);
         return redirect()->route('category.index')->with('success', 'category deleted successfully.');
     }
 }

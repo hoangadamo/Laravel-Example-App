@@ -30,22 +30,8 @@ class AuthController extends Controller
 
     public function store(RegisterRequest $request)
     {
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'age' => $request->age,
-            'password' => $request->password
-        ];
-
-        if ($request->hasFile('image')) {
-            $data['imageUrl'] = $this->user->uploadFile($request->file('image'));
-        }
-        $data['password'] = Hash::make($data['password']);
-
-        User::create($data);
-
+        $user = $this->user->storeUser($request);
         $this->sendOTP($request);
-
         return redirect()->route('verify')->with('success', 'Registration successful! Verify email now.');
     }
 
