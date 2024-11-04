@@ -28,7 +28,7 @@ class CategoryRepository
 
     public function update($id, $data)
     {
-        return $this->category->where('id', $id)->update(array_filter($data));
+        return $this->category->where('id', $id)->update($data);
     }
 
     public function delete($id)

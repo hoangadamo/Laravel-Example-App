@@ -70,7 +70,7 @@ class CategoryService
                 'description' => $request->description
             ];
 
-            $this->categoryRepository->update($id, $data);
+            $this->categoryRepository->update($id, array_filter($data));
             $updatedCategory = $this->categoryRepository->getById($id);
             $categoryResource = new CategoryResource($updatedCategory);
             return response()->json($categoryResource, 200);
