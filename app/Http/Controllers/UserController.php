@@ -13,22 +13,22 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    protected $user;
+    protected $userModel;
 
     public function __construct(User $user)
     {
-        $this->user = $user;
+        $this->userModel = $user;
     }
 
     public function index()
     {
-        $users = $this->user->getUsers();
+        $users = $this->userModel->getUsers();
         return view('users.index', compact('users'));
     }
 
     public function store(CreateUserRequest $request)
     {
-        $users = $this->user->storeUser($request);
+        $users = $this->userModel->storeUser($request);
         return redirect(route('user.index'));
     }
 
@@ -40,21 +40,21 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, $id)
     {
 
-        $this->user->updateUser($request, $id);
+        $this->userModel->updateUser($request, $id);
 
         return redirect()->route('user.index')->with('success', 'User updated successfully.');
     }
 
     public function destroy($id)
     {
-        $this->user->deleteUser($id);
+        $this->userModel->deleteUser($id);
         return redirect(route('user.index'))->with('success', 'user deleted successfully');
     }
 
     public function toggleStatus($id)
     {
         try {
-            $user = $this->user->getUserById($id);
+            $user = $this->userModel->getUserById($id);
             $user->where('id', $id)->update(['isActive' => !$user->isActive]);
             return redirect()->back()->with('success', 'User status updated successfully!');
         } catch (\Exception $e) {

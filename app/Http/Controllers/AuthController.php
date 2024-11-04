@@ -15,11 +15,11 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    protected $user;
+    protected $userModel;
 
     public function __construct(User $user)
     {
-        $this->user = $user;
+        $this->userModel = $user;
         // $this->middleware('web');
     }
 
@@ -30,7 +30,7 @@ class AuthController extends Controller
 
     public function store(RegisterRequest $request)
     {
-        $user = $this->user->storeUser($request);
+        $user = $this->userModel->storeUser($request);
         $this->sendOTP($request);
         return redirect()->route('verify')->with('success', 'Registration successful! Verify email now.');
     }
@@ -63,7 +63,7 @@ class AuthController extends Controller
         $email = session('email');
         if ($storedOtp && $inputOtp == $storedOtp && Carbon::now()->lessThanOrEqualTo(Carbon::parse($otpExpiration))) {
             session()->forget(['otp', 'otp_expiration']);
-            $user = $this->user->where('email', $email)->first();
+            $user = $this->userModel->where('email', $email)->first();
             if ($user) {
                 $user->email_verified_at = Carbon::now();
                 $user->save();
@@ -131,7 +131,7 @@ class AuthController extends Controller
     {
         $request->validate(['email' => 'required|email']);
         $email = $request->input('email');
-        $user = $this->user->where('email', $email)->first();
+        $user = $this->userModel->where('email', $email)->first();
         if (!$user) {
             return redirect()->back()->with('error', 'Email does not exist');
         }
@@ -165,7 +165,7 @@ class AuthController extends Controller
             return redirect()->back()->with('error', 'Invalid token or email.');
         }
 
-        $user = User::where('email', $request->email)->first();
+        $user = $this->userModel->where('email', $request->email)->first();
         if (!$user) {
             return redirect()->back()->with('error', 'No user found with this email.');
         }

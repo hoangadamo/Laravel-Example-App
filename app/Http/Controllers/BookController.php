@@ -10,16 +10,16 @@ use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-    protected $book;
+    protected $bookModel;
 
     public function __construct(Book $book)
     {
-        $this->book = $book;
+        $this->bookModel = $book;
     }
 
     public function index()
     {
-        $books = $this->book->getBooks();
+        $books = $this->bookModel->getBooks();
         $categories = Category::all();
         return view('books.index', compact('books', 'categories'));
     }
@@ -27,7 +27,7 @@ class BookController extends Controller
 
     public function store(CreateBookRequest $request)
     {
-        $book = $this->book->createBook($request);
+        $book = $this->bookModel->createBook($request);
         return redirect(route('book.index'))->with('success', 'Book created successfully.');
     }
 
@@ -38,7 +38,7 @@ class BookController extends Controller
 
     public function update(UpdateBookRequest $request, $id)
     {
-        $book = $this->book->getBookById($id);
+        $book = $this->bookModel->getBookById($id);
         if (!$book) {
             return redirect()->back()->with('error', 'Book not found')->withInput();
         }
@@ -50,7 +50,7 @@ class BookController extends Controller
 
     public function destroy($id)
     {
-        $this->book->deleteBook($id);
+        $this->bookModel->deleteBook($id);
         return redirect(route('book.index'))->with('success', 'book deleted successfully');
     }
 }
