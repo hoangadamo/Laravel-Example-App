@@ -16,11 +16,26 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
     <title>Document</title>
+    <style>
+        body,
+        html {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+        }
+    </style>
 </head>
 
 <body>
     @include('header')
-    @yield('content')
+    <div class="content">
+        @yield('content')
+    </div>
+    @include('footer')
 </body>
 
 </html>
