@@ -5,44 +5,48 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use App\Repositories\CategoryRepository;
+use App\Services\CategoryService;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    protected $categoryService;
+    protected $categoryRepository;
 
-    protected $categoryModel;
-
-    public function __construct(Category $category)
+    public function __construct(CategoryService $categoryService, CategoryRepository $categoryRepository)
     {
-        $this->categoryModel = $category;
+        $this->categoryService = $categoryService;
+        $this->categoryRepository = $categoryRepository;
     }
 
     public function index()
     {
-        $categories = $this->categoryModel->getCategories();
+        $categories = $this->categoryRepository->get();
         return view('categories.index', compact('categories'));
     }
 
     public function store(CreateCategoryRequest $request)
     {
-        $categories = $this->categoryModel->createCategory($request);
+        $categories = $this->categoryService->createCategory($request);
         return redirect(route('category.index'));
     }
 
     public function edit(Category $category, $id)
     {
-        return response()->json($category->findOrFail($id));
+        $category = $this->categoryRepository->getById($id);
+        return response()->json($category);
     }
 
-    public function update(UpdateCategoryRequest $request, Category $category, $id)
+    public function update(UpdateCategoryRequest $request, $id)
     {
-        $this->categoryModel->updateCategory($request, $id);
+        $this->categoryService->updateCategory($id, $request);
         return redirect()->route('category.index')->with('success', 'category updated successfully.');
     }
 
     public function destroy($id)
     {
-        $this->categoryModel->deleteCategory($id);
+        $this->categoryRepository->delete($id);
         return redirect()->route('category.index')->with('success', 'category deleted successfully.');
     }
 }

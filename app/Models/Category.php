@@ -20,40 +20,4 @@ class Category extends Model
     {
         return $this->belongsToMany(Book::class, 'books_categories', 'categoryId', 'bookId');
     }
-
-    public function getCategories()
-    {
-        return $this->get();
-    }
-
-    public function getCategoryById($id)
-    {
-        return $this->where('id', $id)->first();
-    }
-
-    public function createCategory($request)
-    {
-        $data = [
-            'name' => $request->name,
-            'description' => $request->description,
-        ];
-
-        $category = $this->create($data);
-        return $category;
-    }
-
-    public function updateCategory($request, $id)
-    {
-        $data = [
-            'name' => $request->name,
-            'description' => $request->description
-        ];
-
-        $this->where('id', $id)->update(array_filter($data));
-    }
-
-    public function deleteCategory($id)
-    {
-        $this->where('id', $id)->delete();
-    }
 }
