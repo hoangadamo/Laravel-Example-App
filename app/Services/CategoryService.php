@@ -27,7 +27,7 @@ class CategoryService
             ];
             $category = $this->categoryRepository->create($data);
             $categoryResource = new CategoryResource($category);
-            return response()->json($categoryResource, 201);
+            return response()->json(['message' => 'Create category successfully', 'category' => $categoryResource], 201);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Create category failed', 'message' => $e->getMessage()], 500);
         }

@@ -29,7 +29,7 @@ class CategoryController extends Controller
     public function store(CreateCategoryRequest $request)
     {
         $categories = $this->categoryService->createCategory($request);
-        return redirect(route('category.index'));
+        return redirect(route('category.index'))->with('success', 'Category created successfully.');;
     }
 
     public function edit($id)
