@@ -20,19 +20,24 @@ class UserService
 
     public function storeUser($request)
     {
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'age' => $request->age,
-            'password' => $request->password
-        ];
-        $data['password'] = Hash::make($data['password']);
-        if ($request->hasFile('image')) {
-            $IMAGE_URL = uploadFile($request->file('image'));
-            $data['imageUrl'] = $IMAGE_URL;
+        try {
+            $data = [
+                'name' => $request->name,
+                'email' => $request->email,
+                'age' => $request->age,
+                'password' => $request->password
+            ];
+            $data['password'] = Hash::make($data['password']);
+            if ($request->hasFile('image')) {
+                $IMAGE_URL = uploadFile($request->file('image'));
+                $data['imageUrl'] = $IMAGE_URL;
+            }
+            $user = $this->userRepository->create($data);
+            $userResource = new UserResource($user);
+            return response()->json(['message' => 'Create user successfully', 'user' => $userResource], 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Create user failed', 'message' => $e->getMessage()], 500);
         }
-        $user = $this->userRepository->create($data);
-        return $user;
     }
 
     public function getUsers($limit)
