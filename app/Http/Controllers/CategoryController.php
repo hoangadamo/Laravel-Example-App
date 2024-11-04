@@ -32,7 +32,7 @@ class CategoryController extends Controller
         return redirect(route('category.index'));
     }
 
-    public function edit(Category $category, $id)
+    public function edit($id)
     {
         $category = $this->categoryRepository->getById($id);
         return response()->json($category);
@@ -46,7 +46,7 @@ class CategoryController extends Controller
 
     public function destroy($id)
     {
-        $this->categoryRepository->delete($id);
+        $this->categoryService->deleteCategory($id);
         return redirect()->route('category.index')->with('success', 'category deleted successfully.');
     }
 }

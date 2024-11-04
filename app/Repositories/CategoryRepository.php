@@ -38,6 +38,6 @@ class CategoryRepository
 
     public function paginate($limit)
     {
-        $this->category->paginate($limit);
+        return $this->category->paginate($limit);
     }
 }
