@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use App\Repositories\UserRepository;
+use App\Services\AuthService;
+use App\Services\UserService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,12 +18,13 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    protected $userModel;
+    protected $authService;
+    protected $userRepository;
 
-    public function __construct(User $user)
+    public function __construct(AuthService $authService, UserRepository $userRepository)
     {
-        $this->userModel = $user;
-        // $this->middleware('web');
+        $this->authService = $authService;
+        $this->userRepository = $userRepository;
     }
 
     public function register()
@@ -30,7 +34,7 @@ class AuthController extends Controller
 
     public function store(RegisterRequest $request)
     {
-        $user = $this->userModel->storeUser($request);
+        $user = $this->authService->register($request);
         $this->sendOTP($request);
         return redirect()->route('verify')->with('success', 'Registration successful! Verify email now.');
     }
@@ -63,7 +67,7 @@ class AuthController extends Controller
         $email = session('email');
         if ($storedOtp && $inputOtp == $storedOtp && Carbon::now()->lessThanOrEqualTo(Carbon::parse($otpExpiration))) {
             session()->forget(['otp', 'otp_expiration']);
-            $user = $this->userModel->where('email', $email)->first();
+            $user = $this->userRepository->getByEmail($email);
             if ($user) {
                 $user->email_verified_at = Carbon::now();
                 $user->save();
@@ -131,7 +135,7 @@ class AuthController extends Controller
     {
         $request->validate(['email' => 'required|email']);
         $email = $request->input('email');
-        $user = $this->userModel->where('email', $email)->first();
+        $user = $this->userRepository->getByEmail($email);
         if (!$user) {
             return redirect()->back()->with('error', 'Email does not exist');
         }
@@ -165,7 +169,7 @@ class AuthController extends Controller
             return redirect()->back()->with('error', 'Invalid token or email.');
         }
 
-        $user = $this->userModel->where('email', $request->email)->first();
+        $user = $this->userRepository->getByEmail($request->email);
         if (!$user) {
             return redirect()->back()->with('error', 'No user found with this email.');
         }

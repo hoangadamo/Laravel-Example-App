@@ -41,4 +41,9 @@ class UserRepository
     {
         return $this->user->paginate($limit);
     }
+
+    public function getByEmail($email)
+    {
+        return $this->user->where('email', $email)->first();
+    }
 }
