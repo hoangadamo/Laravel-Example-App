@@ -8,100 +8,47 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
-    protected $userModel;
+    protected $userService;
 
-    public function __construct(User $user)
+    public function __construct(UserService $userService)
     {
-        $this->userModel = $user;
+        $this->userService = $userService;
     }
 
     public function getListOfUsers(Request $request)
     {
-        try {
-            $limit = $request->query('limit', 10);
-            $users = $this->userModel->paginate($limit);
-            $userCollection = new UserCollection($users);
-            return response()->json($userCollection, 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Get list of users failed', 'message' => $e->getMessage()], 500);
-        }
+        $limit = $request->query('limit', 10);
+        return $this->userService->getUsers($limit);
     }
 
     public function getUserDetails($id)
     {
-        try {
-            $user = $this->userModel->getUserById($id);
-            if (!$user) {
-                return response()->json(['message' => 'User not found'], 404);
-            }
-            $userResource = new UserResource($user);
-            return response()->json($userResource, 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Get user detail failed', 'message' => $e->getMessage()], 500);
-        }
+        return $this->userService->getUserById($id);
     }
 
-    public function updateUser(UpdateUserRequest $request, $id)
+    public function updateUser($id, UpdateUserRequest $request)
     {
-        try {
-            $user = $this->userModel->getUserById($id);
-            if (!$user) {
-                return response()->json(['error' => 'User not found'], 404);
-            }
-            $user->updateUser($request, $id);
-
-            $updatedUser = $this->userModel->getUserById($id);
-            $userResource = new UserResource($updatedUser);
-            return response()->json(['success' => 'User updated successfully', 'user' => $userResource], 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Update user failed', 'message' => $e->getMessage()], 500);
-        }
+        return $this->userService->updateUser($id, $request);
     }
 
-    public function changePassword(ChangePasswordRequest $request, $id)
+    public function changePassword($id, ChangePasswordRequest $request)
     {
-        try {
-            $user = $this->userModel->getUserById($id);
-            if (!$user) {
-                return response()->json(['error' => 'User not found'], 404);
-            }
-            $response = $this->userModel->changePassword($request, $id);
-            return $response;
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Change password failed', 'message' => $e->getMessage()], 500);
-        }
+        return $this->userService->changePassword($id, $request);
     }
 
     public function deleteUser($id)
     {
-        try {
-            $user = $this->userModel->getUserById($id);
-            if (!$user) {
-                return response()->json(['error' => 'User not found'], 404);
-            }
-            $this->userModel->deleteUser($id);
-            return response()->json(['message' => 'User deleted successfully'], 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Delete user failed', 'message' => $e->getMessage()], 500);
-        }
+        return $this->userService->deleteUser($id);
     }
 
     public function getAllUserBooks($id)
     {
-        try {
-            $user = $this->userModel->getUserById($id);
-            if (!$user) {
-                return response()->json(['error' => 'User not found'], 404);
-            }
-            $books = $user->books;
-            return response()->json($books, 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Get all books of user failed', 'message' => $e->getMessage()], 500);
-        }
+        return $this->userService->getAllUserBooks($id);
     }
 }

@@ -7,58 +7,55 @@ use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Repositories\UserRepository;
+use App\Services\UserService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    protected $userModel;
+    protected $userRepository;
+    protected $userService;
 
-    public function __construct(User $user)
+    public function __construct(UserRepository $userRepository, UserService $userService)
     {
-        $this->userModel = $user;
+        $this->userRepository = $userRepository;
+        $this->userService = $userService;
     }
 
     public function index()
     {
-        $users = $this->userModel->getUsers();
+        $users = $this->userRepository->get();
         return view('users.index', compact('users'));
     }
 
     public function store(CreateUserRequest $request)
     {
-        $users = $this->userModel->storeUser($request);
+        $users = $this->userService->storeUser($request);
         return redirect(route('user.index'));
     }
 
-    public function edit(User $user, $id)
+    public function edit($id)
     {
-        return response()->json($user->findOrFail($id));
+        $user = $this->userRepository->getById($id);
+        return response()->json($user);
     }
 
     public function update(UpdateUserRequest $request, $id)
     {
-
-        $this->userModel->updateUser($request, $id);
-
+        $this->userService->updateUser($id, $request);
         return redirect()->route('user.index')->with('success', 'User updated successfully.');
     }
 
     public function destroy($id)
     {
-        $this->userModel->deleteUser($id);
+        $this->userService->deleteUser($id);
         return redirect(route('user.index'))->with('success', 'user deleted successfully');
     }
 
     public function toggleStatus($id)
     {
-        try {
-            $user = $this->userModel->getUserById($id);
-            $user->where('id', $id)->update(['isActive' => !$user->isActive]);
-            return redirect()->back()->with('success', 'User status updated successfully!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
-        }
+        return $this->userService->toggleStatus($id);
     }
 }
