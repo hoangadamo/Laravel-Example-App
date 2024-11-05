@@ -4,53 +4,58 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateBookRequest;
 use App\Http\Requests\UpdateBookRequest;
-use App\Models\Book;
 use App\Models\Category;
+use App\Repositories\BookRepository;
+use App\Services\BookService;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-    protected $bookModel;
+    protected $bookSerivce;
+    protected $bookRepository;
+    protected $categoryModel;
 
-    public function __construct(Book $book)
+    public function __construct(BookService $bookSerivce, BookRepository $bookRepository, Category $category)
     {
-        $this->bookModel = $book;
+        $this->bookSerivce = $bookSerivce;
+        $this->bookRepository = $bookRepository;
+        $this->categoryModel = $category;
     }
 
     public function index()
     {
-        $books = $this->bookModel->getBooks();
-        $categories = Category::all();
+        $books = $this->bookRepository->get();
+        $categories = $this->categoryModel->get();
         return view('books.index', compact('books', 'categories'));
     }
 
 
     public function store(CreateBookRequest $request)
     {
-        $book = $this->bookModel->createBook($request);
+        $book = $this->bookSerivce->createBook($request);
         return redirect(route('book.index'))->with('success', 'Book created successfully.');
     }
 
-    public function edit(Book $book, $id)
+    public function edit($id)
     {
-        return response()->json($book->findOrFail($id));
+        $book = $this->bookRepository->getById($id);
+        return response()->json($book);
     }
 
-    public function update(UpdateBookRequest $request, $id)
+    public function update($id, UpdateBookRequest $request)
     {
-        $book = $this->bookModel->getBookById($id);
+        $book = $this->bookSerivce->getBookById($id);
         if (!$book) {
             return redirect()->back()->with('error', 'Book not found')->withInput();
         }
-        $book->updateBook($request, $id);
+        $this->bookSerivce->updateBook($id, $request);
 
         return redirect()->route('book.index')->with('success', 'Book updated successfully.');
     }
 
-
     public function destroy($id)
     {
-        $this->bookModel->deleteBook($id);
+        $this->bookSerivce->deleteBook($id);
         return redirect(route('book.index'))->with('success', 'book deleted successfully');
     }
 }
